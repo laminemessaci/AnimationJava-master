@@ -154,8 +154,9 @@ class Panneau extends JPanel {
         drawSize = 50;
     }
 
+
     public void setForme(String form){
-        this.forme = form;
+        this.forme = form.toUpperCase();
     }
 
     public int getPosX() {

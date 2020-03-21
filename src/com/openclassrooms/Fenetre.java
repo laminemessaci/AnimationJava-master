@@ -2,10 +2,7 @@ package com.openclassrooms;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 
 import javax.swing.*;
 
@@ -83,25 +80,47 @@ public class Fenetre extends JFrame {
         this.setVisible(true);
     }
 
-    private void initMenu() {
-        //Menu animation
+    private void initMenu(){
+        //Cette instruction ajoute l'accélérateur 'c' à notre objet
+        //lancer.setAccelerator(KeyStroke.getKeyStroke('c'));
+        lancer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_MASK));
         animation.add(lancer);
+//Ajout du listener pour arrêter l'animation
+        arreter.addActionListener(new StopAnimationListener());
+        arreter.setEnabled(false);
+        arreter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+        animation.add(arreter);
+        //Menu Animation
+        //Ajout du listener pour lancer l'animation
+        lancer.addActionListener(new StartAnimationListener());
+        animation.add(lancer);
+
+        //Ajout du listener pour arrêter l'animation
+        arreter.addActionListener(new StopAnimationListener());
         arreter.setEnabled(false);
         animation.add(arreter);
+
         animation.addSeparator();
-        //Pour quitter l'application
-        quitter.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
+        quitter.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent event){
                 System.exit(0);
             }
         });
         animation.add(quitter);
 
-        //Menu forme
+        //Menu Forme
+
         bg.add(carre);
         bg.add(triangle);
         bg.add(rond);
         bg.add(etoile);
+
+        //On crée un nouvel écouteur, inutile de créer 4 instances différentes
+        FormeListener fl = new FormeListener();
+        carre.addActionListener(fl);
+        rond.addActionListener(fl);
+        triangle.addActionListener(fl);
+        etoile.addActionListener(fl);
 
         typeForme.add(rond);
         typeForme.add(carre);
@@ -111,19 +130,40 @@ public class Fenetre extends JFrame {
         rond.setSelected(true);
 
         forme.add(typeForme);
+
+        //Ajout du listener pour le morphing
+        morph.addActionListener(new MorphListener());
         forme.add(morph);
 
         //Menu À propos
+
+        //Ajout de ce que doit faire le "?"
+        aProposItem.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0) {
+                JOptionPane jop = new JOptionPane();
+                ImageIcon img = new ImageIcon("images/cysboy.gif");
+                String mess = "Merci ! \n J'espère que vous vous amusez bien !\n";
+                mess += "Je crois qu'il est temps d'ajouter des accélérateurs et des " + " mnémoniques dans tout ça…\n";
+                mess += "\n Allez, GO feignant !";
+                jop.showMessageDialog(null, mess, "À propos", JOptionPane.INFORMATION_MESSAGE, img);
+            }
+        });
         aPropos.add(aProposItem);
+        //Ajout des menus dans la barre de menus et ajout de mnémoniques !
+        animation.setMnemonic('A');
+        forme.setMnemonic('F');
+        aPropos.setMnemonic('P');
 
         //Ajout des menus dans la barre de menus
         menuBar.add(animation);
         menuBar.add(forme);
         menuBar.add(aPropos);
 
+
         //Ajout de la barre de menus sur la fenêtre
         this.setJMenuBar(menuBar);
     }
+
 
     private  void go() {
         x = pan.getPosX();
@@ -159,7 +199,7 @@ public class Fenetre extends JFrame {
     }
 
     //Classe écoutant notre bouton
-    public class BoutonListener implements ActionListener {
+    public class StartAnimationListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             //  animated = true;
             //  t = new Thread(new PlayAnimation());
@@ -185,7 +225,7 @@ public class Fenetre extends JFrame {
         }
     }
 
-        class Bouton2Listener implements ActionListener {
+        class StopAnimationListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 //   animated = false;
                 //   bouton.setEnabled(true);
@@ -218,6 +258,7 @@ public class Fenetre extends JFrame {
                     //La méthode retourne un Object puisque nous passons des Object dans une liste
                     //Il faut donc utiliser la méthode toString() pour retourner un String (ou utiliser un cast)
                     // pan.setForme(combo.getSelectedItem().toString());
+                    pan.setForme(((JRadioButtonMenuItem)e.getSource()).getText().toString());
                 }
             }
 
