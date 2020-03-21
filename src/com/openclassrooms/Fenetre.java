@@ -68,6 +68,20 @@ public class Fenetre extends JFrame {
     private CouleurFondListener bgColor = new CouleurFondListener();
     private CouleurFormeListener frmColor = new CouleurFormeListener();
 
+    //Création de notre barre d'outils
+    private JToolBar toolBar = new JToolBar();
+
+    //Les boutons de la barre d'outils
+    private JButton   play = new JButton(new ImageIcon("images/play.png")),
+            cancel = new JButton(new ImageIcon("images/stop.png")),
+            square = new JButton(new ImageIcon("images/carré.png")),
+            tri = new JButton(new ImageIcon("images/triangle.png")),
+            circle = new JButton(new ImageIcon("images/rond.png")),
+            star = new JButton(new ImageIcon("images/étoile.png"));
+
+    private Color fondBouton = Color.white;
+    private FormeListener fListener = new FormeListener();
+
 
     public Fenetre() {
         this.setTitle("Animation");
@@ -128,8 +142,41 @@ public class Fenetre extends JFrame {
 
         this.setContentPane(container);
         this.initMenu();
+        initToolBar();
         this.setVisible(true);
     }
+
+    private void initToolBar(){
+        this.cancel.setEnabled(false);
+        this.cancel.addActionListener(stopAnimation);
+        this.cancel.setBackground(fondBouton);
+        this.play.addActionListener(startAnimation);
+        this.play.setBackground(fondBouton);
+
+        this.toolBar.add(play);
+        this.toolBar.add(cancel);
+        this.toolBar.addSeparator();
+
+        //Ajout des Listeners
+        this.circle.addActionListener(fListener);
+        this.circle.setBackground(fondBouton);
+        this.toolBar.add(circle);
+
+        this.square.addActionListener(fListener);
+        this.square.setBackground(fondBouton);
+        this.toolBar.add(square);
+
+        this.tri.setBackground(fondBouton);
+        this.tri.addActionListener(fListener);
+        this.toolBar.add(tri);
+
+        this.star.setBackground(fondBouton);
+        this.star.addActionListener(fListener);
+        this.toolBar.add(star);
+
+        this.add(toolBar, BorderLayout.NORTH);
+    }
+
 
     private void initMenu() {
         //Ajout du listener pour lancer l'animation
@@ -238,12 +285,6 @@ public class Fenetre extends JFrame {
     //Classe écoutant notre bouton
     public class StartAnimationListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
-            //  animated = true;
-            //  t = new Thread(new PlayAnimation());
-            //  t.start();
-            //  bouton.setEnabled(false);
-            //  bouton2.setEnabled(true);
-
             JOptionPane jop = new JOptionPane();
             int option = jop.showConfirmDialog(null,
                     "Voulez-vous lancer l'animation ?",
@@ -254,9 +295,14 @@ public class Fenetre extends JFrame {
             if (option == JOptionPane.OK_OPTION) {
                 lancer.setEnabled(false);
                 arreter.setEnabled(true);
-                //On ajoute l'instruction pour le menu contextuel
+
+                //ON AJOUTE L'INSTRUCTION POUR LE MENU CONTEXTUEL
+                //************************************************
                 launch.setEnabled(false);
                 stop.setEnabled(true);
+
+                play.setEnabled(false);
+                cancel.setEnabled(true);
 
                 animated = true;
                 t = new Thread(new PlayAnimation());
@@ -287,9 +333,13 @@ public class Fenetre extends JFrame {
                 lancer.setEnabled(true);
                 arreter.setEnabled(false);
 
-                //On ajoute l'instruction pour le menu contextuel
+                //ON AJOUTE L'INSTRUCTION POUR LE MENU CONTEXTUEL
+                //************************************************
                 launch.setEnabled(true);
                 stop.setEnabled(false);
+
+                play.setEnabled(true);
+                cancel.setEnabled(false);
             }
         }
     }
@@ -303,10 +353,23 @@ public class Fenetre extends JFrame {
 
     class FormeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            //La méthode retourne un Object puisque nous passons des Object dans une liste
-            //Il faut donc utiliser la méthode toString() pour retourner un String (ou utiliser un cast)
-            // pan.setForme(combo.getSelectedItem().toString());
-            pan.setForme(((JRadioButtonMenuItem) e.getSource()).getText().toString());
+            //Si l'action vient d'un bouton radio du menu
+            if(e.getSource().getClass().getName().equals("javax.swing.JRadioButtonMenuItem"))
+                pan.setForme(((JRadioButtonMenuItem)e.getSource()).getText().toString());
+            else{
+                if(e.getSource() == square){
+                    carre.doClick();
+                }
+                else if(e.getSource() == tri){
+                    triangle.doClick();
+                }
+                else if(e.getSource() == star){
+                    etoile.doClick();
+                }
+                else{
+                    rond.doClick();
+                }
+            }
         }
     }
 
