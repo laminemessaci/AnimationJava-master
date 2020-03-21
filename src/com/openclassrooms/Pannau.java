@@ -182,7 +182,7 @@ class Panneau extends JPanel {
 
 
     public void setForme(String form){
-        this.forme = form.toUpperCase();
+        this.forme = form.toString().toUpperCase();
     }
 
     public int getPosX() {
