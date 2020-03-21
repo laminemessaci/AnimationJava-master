@@ -24,6 +24,7 @@ public class Fenetre extends JFrame {
     private int x, y;
     private Thread t;
 
+
     private JMenuBar menuBar = new JMenuBar();
 
     private JMenu animation = new JMenu("Animation"),
@@ -44,6 +45,26 @@ public class Fenetre extends JFrame {
 
     private ButtonGroup bg = new ButtonGroup();
 
+    //La déclaration pour le menu contextuel
+    private JPopupMenu jpm = new JPopupMenu();
+    private JMenu background = new JMenu("Couleur de fond");
+    private JMenu couleur = new JMenu("Couleur de la forme");
+
+    private JMenuItem launch = new JMenuItem("Lancer l'animation");
+    private JMenuItem stop = new JMenuItem("Arrêter l'animation");
+    private JMenuItem  rouge = new JMenuItem("Rouge"),
+            bleu = new JMenuItem("Bleu"),
+            vert = new JMenuItem("Vert"),
+            rougeBack = new JMenuItem("Rouge"),
+            bleuBack = new JMenuItem("Bleu"),
+            vertBack = new JMenuItem("Vert");
+
+    //On crée des listeners globaux
+    private StopAnimationListener stopAnimation=new StopAnimationListener();
+    private StartAnimationListener startAnimation=new StartAnimationListener();
+
+
+
 
     public Fenetre() {
         this.setTitle("Animation");
@@ -53,6 +74,39 @@ public class Fenetre extends JFrame {
 
         container.setBackground(Color.white);
         container.setLayout(new BorderLayout());
+
+        //On initialise le menu stop
+        stop.setEnabled(false);
+        //On affecte les écouteurs
+        stop.addActionListener(stopAnimation);
+        launch.addActionListener(startAnimation);
+
+        //On crée et on passe l'écouteur pour afficher le menu contextuel
+        //Création d'une implémentation de MouseAdapter
+        //avec redéfinition de la méthode adéquate
+        pan.addMouseListener(new MouseAdapter(){
+            public void mouseReleased(MouseEvent event){
+                //Seulement s'il s'agit d'un clic droit
+                //if(event.getButton() == MouseEvent.BUTTON3)
+                if(event.isPopupTrigger()){
+                    background.add(rougeBack);
+                    background.add(bleuBack);
+                    background.add(vertBack);
+
+                    couleur.add(rouge);
+                    couleur.add(bleu);
+                    couleur.add(vert);
+
+                    jpm.add(launch);
+                    jpm.add(stop);
+                    jpm.add(couleur);
+                    jpm.add(background);
+                    //La méthode qui va afficher le menu
+                    jpm.show(pan, event.getX(), event.getY());
+                }
+            }
+        });
+
         container.add(pan, BorderLayout.CENTER);
 
         //   bouton.addActionListener(new BoutonListener());
@@ -83,6 +137,20 @@ public class Fenetre extends JFrame {
     private void initMenu(){
         //Cette instruction ajoute l'accélérateur 'c' à notre objet
         //lancer.setAccelerator(KeyStroke.getKeyStroke('c'));
+
+        //Ajout du listener pour lancer l'animation
+        //ATTENTION, LE LISTENER EST GLOBAL !!!
+        lancer.addActionListener(startAnimation);
+        //On attribue l'accélerateur c
+       // lancer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_MASK));
+       // animation.add(lancer);
+
+        //Ajout du listener pour arrêter l'animation
+        //LISTENER A CHANGER ICI AUSSI
+        arreter.addActionListener(stopAnimation);
+        arreter.setEnabled(false);
+        arreter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+        animation.add(arreter);
         lancer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_MASK));
         animation.add(lancer);
 //Ajout du listener pour arrêter l'animation
@@ -141,7 +209,7 @@ public class Fenetre extends JFrame {
         aProposItem.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0) {
                 JOptionPane jop = new JOptionPane();
-                ImageIcon img = new ImageIcon("images/cysboy.gif");
+                ImageIcon img = new ImageIcon("images/jijel.jpg");
                 String mess = "Merci ! \n J'espère que vous vous amusez bien !\n";
                 mess += "Je crois qu'il est temps d'ajouter des accélérateurs et des " + " mnémoniques dans tout ça…\n";
                 mess += "\n Allez, GO feignant !";
@@ -217,11 +285,17 @@ public class Fenetre extends JFrame {
             if (option == JOptionPane.OK_OPTION) {
                 lancer.setEnabled(false);
                 arreter.setEnabled(true);
+                //On ajoute l'instruction pour le menu contextuel
+                launch.setEnabled(true);
+                stop.setEnabled(false);
+
                 animated = true;
                 t = new Thread(new PlayAnimation());
                 t.start();
 
+
             }
+
         }
     }
 
@@ -243,6 +317,10 @@ public class Fenetre extends JFrame {
                     //On remplace nos boutons par nos JMenuItem
                     lancer.setEnabled(true);
                     arreter.setEnabled(false);
+
+                    //On ajoute l'instruction pour le menu contextuel
+                    launch.setEnabled(true);
+                    stop.setEnabled(false);
                 }
             }
         }

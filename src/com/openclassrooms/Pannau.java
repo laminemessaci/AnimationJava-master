@@ -19,21 +19,47 @@ class Panneau extends JPanel {
     private int increment = 0;
     private String forme = "ROND";
 
+    //On y ajoute nos deux couleurs
+    private Color couleurForme = Color.red;
+    private Color couleurFond = Color.white;
+
     public void paintComponent(Graphics g){
-        //On choisit une couleur de fond pour le rectangle
-        g.setColor(Color.white);
-        //On le dessine de sorte qu'il occupe toute la surface
+      //  //On choisit une couleur de fond pour le rectangle
+      //  g.setColor(Color.white);
+      //  //On le dessine de sorte qu'il occupe toute la surface
+      //  g.fillRect(0, 0, this.getWidth(), this.getHeight());
+      //  //On redéfinit une couleur pour le rond
+      //  g.setColor(Color.red);
+      //  //Si le mode morphing est activé, on peint le morphing
+      //  if(this.morph)
+      //      drawMorph(g);
+      //  //Si non, on laisse le mode normal
+      //  else
+      //      draw(g);
+        //Affectation de la couleur de fond
+        g.setColor(couleurFond);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
-        //On redéfinit une couleur pour le rond
-        g.setColor(Color.red);
+
+        //Affectation de la couleur de la forme
+        g.setColor(couleurForme);
         //Si le mode morphing est activé, on peint le morphing
         if(this.morph)
             drawMorph(g);
-        //Si non, on laisse le mode normal
+            //Sinon, mode normal
         else
             draw(g);
-
     }
+
+        //Méthode qui redéfinit la couleur du fond
+        public void setCouleurFond(Color color){
+            this.couleurFond = color;
+        }
+
+        //Méthode qui redéfinit la couleur de la forme
+        public void setCouleurForme(Color color){
+            this.couleurForme = color;
+        }
+
 
     private void draw(Graphics g){
         if(this.forme.equals("ROND")){
