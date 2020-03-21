@@ -39,7 +39,7 @@ class Panneau extends JPanel {
         if(this.forme.equals("ROND")){
             g.fillOval(posX, posY, 50, 50);
         }
-        if(this.forme.equals("CARRE")){
+        if(this.forme.equals("CARRE") || this.forme.equals("CARRÉ") ){
             g.fillRect(posX, posY, 50, 50);
         }
         if(this.forme.equals("TRIANGLE")){
